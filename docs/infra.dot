@@ -1,0 +1,41 @@
+digraph INFRA {
+  node [ color = "black", fillcolor = "#E6E6E6", height =1, style = "filled,bold,rounded", fontname = "Arial" ];
+  "azurerm_resource_group.rg" [ label = "azurerm_resource_group.rg
+(azurerm_resource_group)", shape =rectangle ];
+  "module.vwan" [ label = "module.vwan
+(azurerm_virtual_wan)", shape =rectangle, fillcolor = "#E78F81" ];
+  "module.vnet1" [ label = "module.vnet1
+(azurerm_virtual_network)", shape =rectangle, fillcolor = "#E78F81" ];
+  "module.vnet2" [ label = "module.vnet2
+(azurerm_virtual_network)", shape =rectangle, fillcolor = "#E78F81" ];
+  "module.vnet3" [ label = "module.vnet3
+(azurerm_virtual_network)", shape =rectangle, fillcolor = "#E78F81" ];
+  "azurerm_network_interface.spoke1_nic" [ label = "azurerm_network_interface.spoke1_nic
+(azurerm_network_interface)", shape =rectangle, fillcolor = "#E78F81" ];
+  "azurerm_linux_virtual_machine.spoke1_vm" [ label = "azurerm_linux_virtual_machine.spoke1_vm
+(azurerm_linux_virtual_machine)", shape =rectangle, fillcolor = "#B7E0FF" ];
+  "azurerm_network_interface.spoke2_nic" [ label = "azurerm_network_interface.spoke2_nic
+(azurerm_network_interface)", shape =rectangle, fillcolor = "#E78F81" ];
+  "azurerm_linux_virtual_machine.spoke2_vm" [ label = "azurerm_linux_virtual_machine.spoke2_vm
+(azurerm_linux_virtual_machine)", shape =rectangle, fillcolor = "#B7E0FF" ];
+  "azurerm_network_interface.spoke3_nic" [ label = "azurerm_network_interface.spoke3_nic
+(azurerm_network_interface)", shape =rectangle, fillcolor = "#E78F81" ];
+  "azurerm_linux_virtual_machine.spoke3_vm" [ label = "azurerm_linux_virtual_machine.spoke3_vm
+(azurerm_linux_virtual_machine)", shape =rectangle, fillcolor = "#B7E0FF" ];
+  "module.vwan" -> "azurerm_resource_group.rg";
+  "module.vnet1" -> "azurerm_resource_group.rg";
+  "module.vnet2" -> "azurerm_resource_group.rg";
+  "module.vnet3" -> "azurerm_resource_group.rg";
+  "azurerm_network_interface.spoke1_nic" -> "azurerm_resource_group.rg";
+  "azurerm_network_interface.spoke1_nic" -> "module.vnet1";
+  "azurerm_linux_virtual_machine.spoke1_vm" -> "azurerm_resource_group.rg";
+  "azurerm_linux_virtual_machine.spoke1_vm" -> "azurerm_network_interface.spoke1_nic";
+  "azurerm_network_interface.spoke2_nic" -> "azurerm_resource_group.rg";
+  "azurerm_network_interface.spoke2_nic" -> "module.vnet2";
+  "azurerm_linux_virtual_machine.spoke2_vm" -> "azurerm_resource_group.rg";
+  "azurerm_linux_virtual_machine.spoke2_vm" -> "azurerm_network_interface.spoke2_nic";
+  "azurerm_network_interface.spoke3_nic" -> "azurerm_resource_group.rg";
+  "azurerm_network_interface.spoke3_nic" -> "module.vnet3";
+  "azurerm_linux_virtual_machine.spoke3_vm" -> "azurerm_resource_group.rg";
+  "azurerm_linux_virtual_machine.spoke3_vm" -> "azurerm_network_interface.spoke3_nic";
+}
