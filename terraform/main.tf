@@ -2,7 +2,7 @@
 # Resource Group
 # -----------------------------
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-vnet-peering-demo"
+  name     = "rg-vnet-peering"
   location = var.location
 }
 
@@ -23,6 +23,14 @@ resource "azurerm_subnet" "subnet1" {
   address_prefixes     = ["10.0.1.0/24"]
 }
 
+resource "azurerm_public_ip" "public_ip_1" {
+  name                = "vm1-public-ip"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Dynamic"
+  sku                 = "Basic"
+}
+
 resource "azurerm_network_interface" "nic1" {
   name                = "nic1"
   location            = azurerm_resource_group.rg.location
@@ -32,6 +40,7 @@ resource "azurerm_network_interface" "nic1" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet1.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.public_ip_1.id
   }
 }
 
@@ -40,7 +49,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_B1s"
-  admin_username      = "azureuser"
+  admin_username      = "madmax"
   network_interface_ids = [
     azurerm_network_interface.nic1.id,
   ]
@@ -76,6 +85,14 @@ resource "azurerm_subnet" "subnet2" {
   address_prefixes     = ["10.1.1.0/24"]
 }
 
+resource "azurerm_public_ip" "public_ip_2" {
+  name                = "vm2-public-ip"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Dynamic"
+  sku                 = "Basic"
+}
+
 resource "azurerm_network_interface" "nic2" {
   name                = "nic2"
   location            = azurerm_resource_group.rg.location
@@ -85,6 +102,7 @@ resource "azurerm_network_interface" "nic2" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet2.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.public_ip_2.id
   }
 }
 
@@ -93,7 +111,7 @@ resource "azurerm_linux_virtual_machine" "vm2" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_B1s"
-  admin_username      = "azureuser"
+  admin_username      = "madmax"
   network_interface_ids = [
     azurerm_network_interface.nic2.id,
   ]
