@@ -6,6 +6,36 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
+resource "azurerm_network_security_group" "nsg" {
+  name                = "acceptanceTestSecurityGroup1"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  security_rule {
+    name                       = "allow-ssh"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "allow-http"
+    priority                   = 110
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }  
+}
+
 # -----------------------------
 # VNet 1 + Subnet + VM
 # -----------------------------
@@ -27,8 +57,7 @@ resource "azurerm_public_ip" "public_ip_1" {
   name                = "vm1-public-ip"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Dynamic"
-  sku                 = "Basic"
+  allocation_method   = "Static"
 }
 
 resource "azurerm_network_interface" "nic1" {
@@ -44,12 +73,17 @@ resource "azurerm_network_interface" "nic1" {
   }
 }
 
+resource "azurerm_network_interface_security_group_association" "nsg_nic1" {
+  network_interface_id      = azurerm_network_interface.nic1.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
 resource "azurerm_linux_virtual_machine" "vm1" {
   name                = "vm1"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_B1s"
-  admin_username      = "madmax"
+  admin_username      = "madmax"  
   network_interface_ids = [
     azurerm_network_interface.nic1.id,
   ]
@@ -89,8 +123,7 @@ resource "azurerm_public_ip" "public_ip_2" {
   name                = "vm2-public-ip"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Dynamic"
-  sku                 = "Basic"
+  allocation_method   = "Static"
 }
 
 resource "azurerm_network_interface" "nic2" {
@@ -104,6 +137,11 @@ resource "azurerm_network_interface" "nic2" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.public_ip_2.id
   }
+}
+
+resource "azurerm_network_interface_security_group_association" "nsg_nic2" {
+  network_interface_id      = azurerm_network_interface.nic2.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
 resource "azurerm_linux_virtual_machine" "vm2" {
